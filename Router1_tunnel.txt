@@ -1,0 +1,129 @@
+!
+version 15.1
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname IPv6_Tun_1
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+ipv6 unicast-routing
+!
+no ipv6 cef
+!
+ipv6 dhcp pool FIVE
+!
+!
+!
+!
+license udi pid CISCO1941/K9 sn FTX1524FQ30-
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ipv6 host TUNNEL 2001:DB8:ACAD:AAAA::2 
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface Tunnel0
+ no ip address
+ mtu 1476
+ ipv6 address 2001:DB8:ACAD:AAAA::1/64
+ tunnel source GigabitEthernet0/0
+ tunnel destination 172.17.3.2
+ tunnel mode ipv6ip
+!
+!
+interface GigabitEthernet0/0
+ ip address 172.17.1.1 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1.5
+ encapsulation dot1Q 5
+ no ip address
+ ipv6 address 2001:DB8:ACAD:5::1/64
+ ipv6 nd other-config-flag
+!
+interface GigabitEthernet0/1.10
+ encapsulation dot1Q 10
+ no ip address
+ ipv6 address 2001:DB8:ACAD:10::1/64
+ ipv6 nd other-config-flag
+!
+interface GigabitEthernet0/1.15
+ encapsulation dot1Q 15
+ no ip address
+ ipv6 address 2001:DB8:ACAD:15::1/64
+ ipv6 nd other-config-flag
+!
+interface GigabitEthernet0/1.77
+ encapsulation dot1Q 77
+ no ip address
+ ipv6 traffic-filter WLAN in
+ ipv6 address 2001:DB8:ACAD:77::1/64
+ ipv6 nd other-config-flag
+!
+interface GigabitEthernet0/1/0
+ no ip address
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router eigrp 4
+!
+router eigrp 14
+ network 172.17.1.0 0.0.0.3
+!
+ip classless
+!
+ip flow-export version 9
+!
+ipv6 route ::/0 2001:DB8:ACAD:AAAA::2
+!
+ipv6 access-list WLAN
+ remark Prevent Wireless Guests Accessing Finance Dept
+ deny ipv6 2001:DB8:ACAD:77::/64 2001:DB8:ACAD:5::/64
+ permit ipv6 any any
+!
+banner motd  Follow me @ https://twitter.com/IPvZero and search "IPvZero" on Youtube for more free Large Scale Packet Tracer Topologies 
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+

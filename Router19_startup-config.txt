@@ -1,0 +1,140 @@
+!
+version 12.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname Router
+!
+!
+!
+!
+ip dhcp excluded-address 192.168.135.1 192.168.135.15
+ip dhcp excluded-address 192.168.156.1 192.168.156.15
+!
+ip dhcp pool VOICE
+ network 192.168.135.0 255.255.255.0
+ default-router 192.168.135.1
+ option 150 ip 192.168.135.1
+ip dhcp pool Data
+ network 192.168.156.0 255.255.255.0
+ default-router 192.168.156.1
+ dns-server 8.8.8.8
+ domain-name cogc.co.uk
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface FastEthernet0/0
+ ip address 172.18.1.1 255.255.255.252
+ ip nat outside
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1
+ no ip address
+ ip nat inside
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/1.135
+ encapsulation dot1Q 135
+ ip address 192.168.135.1 255.255.255.0
+ ip nat inside
+!
+interface FastEthernet0/1.156
+ encapsulation dot1Q 156
+ ip address 192.168.156.1 255.255.255.0
+ ip nat inside
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router eigrp 14
+ network 172.18.1.0 0.0.0.3
+ no auto-summary
+!
+ip nat inside source list NAT interface FastEthernet0/0 overload
+ip classless
+ip route 0.0.0.0 0.0.0.0 FastEthernet0/0 
+!
+ip flow-export version 9
+!
+!
+ip access-list standard NAT
+ remark Translate all VoIP and Data to Fast0/0
+ permit 192.168.135.0 0.0.0.255
+ permit 192.168.156.0 0.0.0.255
+!
+banner motd  Follow me @ https://twitter.com/IPvZero and search "IPvZero" on Youtube for more free Large Scale Packet Tracer Topologies 
+!
+!
+!
+!
+!
+telephony-service
+ max-ephones 5
+ max-dn 5
+ ip source-address 192.168.135.1 port 2000
+ auto assign 1 to 5
+ auto assign 4 to 6
+!
+ephone-dn 1
+ number 54001
+!
+ephone-dn 2
+ number 54002
+!
+ephone-dn 3
+ number 54003
+!
+ephone 1
+ device-security-mode none
+ mac-address 0009.7CB4.C706
+ type 7960
+ button 1:1
+!
+ephone 2
+ device-security-mode none
+ mac-address 0001.4300.8222
+ type 7960
+ button 1:2
+!
+ephone 3
+ device-security-mode none
+ mac-address 00E0.F708.0AE1
+ type 7960
+ button 1:3
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
